@@ -1,0 +1,7 @@
+# Secrets. Need to keep them safe.
+credentials.json
+token.json
+.env
+
+# Because reasons
+node_modules/
