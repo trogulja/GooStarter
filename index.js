@@ -269,5 +269,7 @@ async function promptInput() {
   }
   
   console.log(`[${new Date().toTimeString().split(" ")[0]}] Job done, exiting`);
+
+  console.log(read, write, answers);
   return true;
 })();
