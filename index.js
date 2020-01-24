@@ -1,7 +1,7 @@
 "use strict";
 
 require("dotenv").config();
-
+const { prompt } = require("prompts");
 const {
   getAuthToken,
   getSpreadSheet,
@@ -16,7 +16,7 @@ function pad(n, width) {
   return n.length >= width ? n : new Array(width - n.length + 1).join("0") + n;
 }
 
-async function readSheets() {
+async function getRb() {
   const auth = await getAuthToken();
   const res = await getSpreadSheetValues({
     spreadsheetId,
@@ -50,4 +50,44 @@ async function readSheets() {
   }
 }
 
-readSheets().then(console.log);
+async function promptInput() {
+  const questions = [
+    {
+      type: "text",
+      name: "projekt",
+      message: `Ime projekta?`,
+    }
+  ];
+
+  const onSubmit = (prompt, answer) => {
+    console.log(`Thanks I got ${answer} from ${prompt.name}`);
+  };
+  const onCancel = prompt => {
+    // Return true to continue and prevent the prompt loop from aborting. On cancel responses collected so far are returned.
+    console.log(`Canceled right at ${prompt.name}`);
+    return true;
+  };
+  const answers = await prompt(questions, { onCancel, onSubmit });
+  return answers;
+}
+
+(async function() {
+  let read, write;
+
+  // console.log(`[${new Date().toTimeString().split(" ")[0]}] Reading google sheets`);
+  read = await getRb();
+
+  // console.log(`[${new Date().toTimeString().split(" ")[0]}] Asking questions`);
+  let answers = await promptInput();
+  console.log(answers);
+
+  // console.log(`[${new Date().toTimeString().split(" ")[0]}] Writing to sheets`);
+  // try {
+  //   write = await authorize(writeSheets);
+  // } catch (err) {
+  //   console.log("No error expected here.", err);
+  // }
+  
+  // console.log(`[${new Date().toTimeString().split(" ")[0]}] Job done, exiting`);
+  return true;
+})();
