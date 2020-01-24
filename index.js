@@ -106,11 +106,13 @@ async function promptInput() {
   let answers = await promptInput();
   
   // console.log(`[${new Date().toTimeString().split(" ")[0]}] Writing to sheets`);
-  let datum = formatDate(new Date());
-  let projekt = answers.projekt;
-  let folderName = rb + '-' + datum.substring(3, 5) + '-' + datum.substring(0, 2) + ' ' + projekt;
-  let values = [[rb, datum, projekt, folderName]]
-  write = await writeSheets(values);
+  if (answers.projekt) {
+    let datum = formatDate(new Date());
+    let projekt = answers.projekt;
+    let folderName = rb + '-' + datum.substring(3, 5) + '-' + datum.substring(0, 2) + ' ' + projekt;
+    let values = [[rb, datum, projekt, folderName]]
+    write = await writeSheets(values);
+  }
   
   // console.log(`[${new Date().toTimeString().split(" ")[0]}] Job done, exiting`);
   return true;
