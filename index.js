@@ -109,7 +109,7 @@ async function promptInput() {
   let datum = formatDate(new Date());
   let projekt = answers.projekt;
   let folderName = rb + '-' + datum.substring(3, 5) + '-' + datum.substring(0, 2) + ' ' + projekt;
-  let values = [rb, datum, projekt, folderName]
+  let values = [[rb, datum, projekt, folderName]]
   write = await writeSheets(values);
   
   // console.log(`[${new Date().toTimeString().split(" ")[0]}] Job done, exiting`);
