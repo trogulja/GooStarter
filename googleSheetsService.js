@@ -1,5 +1,5 @@
 const { google } = require("googleapis");
-const sheets = google.sheets("4");
+const sheets = google.sheets("v4");
 
 const SCOPES = [process.env.SHEET_SCOPES];
 
@@ -31,5 +31,5 @@ async function getSpreadSheetValues({ spreadsheetId, auth, sheetName }) {
 module.exports = {
   getAuthToken,
   getSpreadSheet,
-  getSpreadSheet
+  getSpreadSheetValues
 };

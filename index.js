@@ -1,11 +1,15 @@
+"use strict";
+
+require("dotenv").config();
+
 const {
   getAuthToken,
   getSpreadSheet,
   getSpreadSheetValues
 } = require("./googleSheetsService.js");
 
-const spreadsheetId = process.env.SHEET_ID
-const sheetName = process.env.SHEET_RANGE
+const spreadsheetId = process.env.SHEET_ID;
+const sheetName = process.env.SHEET_RANGE;
 
 async function readSheets() {
   const auth = await getAuthToken();
@@ -13,7 +17,7 @@ async function readSheets() {
     spreadsheetId,
     sheetName,
     auth
-  })
+  });
 
   let sheetData = [];
 
