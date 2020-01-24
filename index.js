@@ -4,7 +4,7 @@ require("dotenv").config();
 const { prompt } = require("prompts");
 const {
   getAuthToken,
-  getSpreadSheet,
+  addSpreadSheetValues,
   getSpreadSheetValues
 } = require("./googleSheetsService.js");
 
@@ -14,6 +14,18 @@ const sheetName = process.env.SHEET_RANGE;
 function pad(n, width) {
   n = n + "";
   return n.length >= width ? n : new Array(width - n.length + 1).join("0") + n;
+}
+
+function formatDate(date) {
+  var d = new Date(date),
+    month = "" + (d.getMonth() + 1),
+    day = "" + d.getDate(),
+    year = d.getFullYear();
+
+  if (month.length < 2) month = "0" + month;
+  if (day.length < 2) day = "0" + day;
+
+  return [day, month, year].join(".") + ".";
 }
 
 async function getRb() {
@@ -50,6 +62,17 @@ async function getRb() {
   }
 }
 
+async function writeSheets(values) {
+  const auth = await getAuthToken();
+
+  await addSpreadSheetValues({
+    spreadsheetId,
+    sheetName,
+    auth,
+    values
+  });
+}
+
 async function promptInput() {
   const questions = [
     {
@@ -64,29 +87,30 @@ async function promptInput() {
   };
   const onCancel = prompt => {
     // Return true to continue and prevent the prompt loop from aborting. On cancel responses collected so far are returned.
-    console.log(`Canceled right at ${prompt.name}`);
+    // console.log(`Canceled right at ${prompt.name}`);
+    console.log('Zahtjev otkazan.')
     return true;
   };
-  const answers = await prompt(questions, { onCancel, onSubmit });
+  // const answers = await prompt(questions, { onCancel, onSubmit });
+  const answers = await prompt(questions);
   return answers;
 }
 
 (async function() {
-  let read, write;
+  let rb, write;
 
   // console.log(`[${new Date().toTimeString().split(" ")[0]}] Reading google sheets`);
-  read = await getRb();
+  rb = await getRb();
 
   // console.log(`[${new Date().toTimeString().split(" ")[0]}] Asking questions`);
   let answers = await promptInput();
-  console.log(answers);
-
+  
   // console.log(`[${new Date().toTimeString().split(" ")[0]}] Writing to sheets`);
-  // try {
-  //   write = await authorize(writeSheets);
-  // } catch (err) {
-  //   console.log("No error expected here.", err);
-  // }
+  let datum = formatDate(new Date());
+  let projekt = answers.projekt;
+  let folderName = rb + '-' + datum.substring(3, 5) + '-' + datum.substring(0, 2) + ' ' + projekt;
+  let values = [rb, datum, projekt, folderName]
+  write = await writeSheets(values);
   
   // console.log(`[${new Date().toTimeString().split(" ")[0]}] Job done, exiting`);
   return true;
