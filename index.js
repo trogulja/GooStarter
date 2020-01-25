@@ -139,6 +139,8 @@ async function promptInput() {
     });
     
     db.close();
+
+    await open(path.join(folderPath, '01 RAW', '/' + folderName + '.cosessiondb'), {wait: false});
   }
   
   // console.log(`[${new Date().toTimeString().split(" ")[0]}] Job done, exiting`);
