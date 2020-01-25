@@ -2,6 +2,10 @@
 
 require("dotenv").config();
 const { prompt } = require("prompts");
+const fs = require("fs");
+const path = require("path");
+const sqlite3 = require("sqlite3");
+const open = require("open");
 const {
   getAuthToken,
   addSpreadSheetValues,
@@ -107,11 +111,34 @@ async function promptInput() {
   
   // console.log(`[${new Date().toTimeString().split(" ")[0]}] Writing to sheets`);
   if (answers.projekt) {
+    // Write to google sheets
     let datum = formatDate(new Date());
     let projekt = answers.projekt;
     let folderName = rb + '-' + datum.substring(3, 5) + '-' + datum.substring(0, 2) + ' ' + projekt;
     let values = [[rb, datum, projekt, folderName]]
     write = await writeSheets(values);
+
+    // Create folders
+    let folderPath = process.env.FOLDER_PATH + folderName;
+
+    await fs.promises.mkdir(path.join(folderPath, '01 RAW', 'Capture'), { recursive: true })
+    await fs.promises.mkdir(path.join(folderPath, '01 RAW', 'Output'), { recursive: true })
+    await fs.promises.mkdir(path.join(folderPath, '01 RAW', 'Selects'), { recursive: true })
+    await fs.promises.mkdir(path.join(folderPath, '01 RAW', 'Trash'), { recursive: true })
+    await fs.promises.mkdir(path.join(folderPath, '02 Radni PSD'), { recursive: true })
+    await fs.promises.mkdir(path.join(folderPath, '03 Isporuka', folderName), { recursive: true })
+
+    fs.copyFileSync(path.join(__dirname + 'template.cosessiondb'), path.join(folderPath, '01 RAW', folderName + '.cosessiondb'))
+
+    let db = new sqlite3.Database(path.join(folderPath, '01 RAW', folderName + '.cosessiondb'))
+
+    db.serialize(function() {
+      let stmt = db.prepare("UPDATE ZCOLLECTION SET ZCAPTURENAMINGNAME=(?) WHERE ZNAME='root'");
+      stmt.run(folderName);
+      stmt.finalize();
+    });
+    
+    db.close();
   }
   
   // console.log(`[${new Date().toTimeString().split(" ")[0]}] Job done, exiting`);

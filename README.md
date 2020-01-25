@@ -7,6 +7,7 @@ GOOGLE_APPLICATION_CREDENTIALS - credentials-file.json
 SHEET_SCOPES
 SHEET_ID
 SHEET_RANGE
+FOLDER_PATH
 
 ## Useful links
 Authorizing Sheets:
