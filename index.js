@@ -112,14 +112,14 @@ async function promptInput() {
   // console.log(`[${new Date().toTimeString().split(" ")[0]}] Writing to sheets`);
   if (answers.projekt) {
     // Write to google sheets
-    let datum = formatDate(new Date());
-    let projekt = answers.projekt;
-    let folderName = rb + '-' + datum.substring(3, 5) + '-' + datum.substring(0, 2) + ' ' + projekt;
-    let values = [[rb, datum, projekt, folderName]]
+    const datum = formatDate(new Date());
+    const projekt = answers.projekt;
+    const folderName = rb + '-' + datum.substring(3, 5) + '-' + datum.substring(0, 2) + ' ' + projekt;
+    const values = [[rb, datum, projekt, folderName]]
     write = await writeSheets(values);
 
     // Create folders
-    let folderPath = process.env.FOLDER_PATH + folderName;
+    const folderPath = process.env.FOLDER_PATH + folderName;
 
     await fs.promises.mkdir(path.join(folderPath, '01 RAW', 'Capture'), { recursive: true })
     await fs.promises.mkdir(path.join(folderPath, '01 RAW', 'Output'), { recursive: true })
@@ -128,9 +128,9 @@ async function promptInput() {
     await fs.promises.mkdir(path.join(folderPath, '02 Radni PSD'), { recursive: true })
     await fs.promises.mkdir(path.join(folderPath, '03 Isporuka', folderName), { recursive: true })
 
-    fs.copyFileSync(path.join(__dirname + 'template.cosessiondb'), path.join(folderPath, '01 RAW', folderName + '.cosessiondb'))
+    fs.copyFileSync(path.join(__dirname + '/template.cosessiondb'), path.join(folderPath, '01 RAW', '/' + folderName + '.cosessiondb'))
 
-    let db = new sqlite3.Database(path.join(folderPath, '01 RAW', folderName + '.cosessiondb'))
+    let db = new sqlite3.Database(path.join(folderPath, '01 RAW', '/' + folderName + '.cosessiondb'))
 
     db.serialize(function() {
       let stmt = db.prepare("UPDATE ZCOLLECTION SET ZCAPTURENAMINGNAME=(?) WHERE ZNAME='root'");
