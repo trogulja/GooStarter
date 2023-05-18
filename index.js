@@ -1,16 +1,17 @@
 "use strict";
 
-require("dotenv").config();
-const { prompt } = require("prompts");
-const fs = require("fs");
-const path = require("path");
-const sqlite3 = require("sqlite3");
-const open = require("open");
-const {
+import "dotenv/config.js";
+import prompts from "prompts";
+const { prompt } = prompts;
+import fs from "fs";
+import path from "path";
+import sqlite3 from "sqlite3";
+import open from "open";
+import {
   getAuthToken,
   addSpreadSheetValues,
   getSpreadSheetValues
-} = require("./googleSheetsService.js");
+} from "./googleSheetsService.js";
 
 const spreadsheetId = process.env.SHEET_ID;
 const sheetName = process.env.SHEET_RANGE;
@@ -108,7 +109,7 @@ async function promptInput() {
 
   // console.log(`[${new Date().toTimeString().split(" ")[0]}] Asking questions`);
   let answers = await promptInput();
-  
+
   // console.log(`[${new Date().toTimeString().split(" ")[0]}] Writing to sheets`);
   if (answers.projekt) {
     // Write to google sheets
@@ -137,12 +138,12 @@ async function promptInput() {
       stmt.run(folderName);
       stmt.finalize();
     });
-    
+
     db.close();
 
     await open(path.join(folderPath, '01 RAW', '/' + folderName + '.cosessiondb'), {wait: false});
   }
-  
+
   // console.log(`[${new Date().toTimeString().split(" ")[0]}] Job done, exiting`);
   return true;
 })();

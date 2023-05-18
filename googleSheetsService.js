@@ -1,9 +1,9 @@
-const { google } = require("googleapis");
+import { google } from "googleapis";
 const sheets = google.sheets("v4");
 
 const SCOPES = [process.env.SHEET_SCOPES];
 
-async function getAuthToken() {
+export async function getAuthToken() {
   const auth = new google.auth.GoogleAuth({
     scopes: SCOPES
   });
@@ -11,7 +11,7 @@ async function getAuthToken() {
   return authToken;
 }
 
-async function getSpreadSheet({ spreadsheetId, auth }) {
+export async function getSpreadSheet({ spreadsheetId, auth }) {
   const res = await sheets.spreadsheets.get({
     spreadsheetId,
     auth
@@ -19,7 +19,7 @@ async function getSpreadSheet({ spreadsheetId, auth }) {
   return res;
 }
 
-async function getSpreadSheetValues({ spreadsheetId, auth, sheetName }) {
+export async function getSpreadSheetValues({ spreadsheetId, auth, sheetName }) {
   const res = await sheets.spreadsheets.values.get({
     spreadsheetId,
     auth,
@@ -28,7 +28,7 @@ async function getSpreadSheetValues({ spreadsheetId, auth, sheetName }) {
   return res;
 }
 
-async function addSpreadSheetValues({ spreadsheetId, auth, sheetName, values }) {
+export async function addSpreadSheetValues({ spreadsheetId, auth, sheetName, values }) {
   const resource = { values }
   const res = await sheets.spreadsheets.values.append({
     spreadsheetId,
@@ -40,10 +40,3 @@ async function addSpreadSheetValues({ spreadsheetId, auth, sheetName, values }) 
   });
   return res;
 }
-
-module.exports = {
-  getAuthToken,
-  getSpreadSheet,
-  getSpreadSheetValues,
-  addSpreadSheetValues
-};
